@@ -1,0 +1,24 @@
+---
+
+// Import Swiper styles
+import 'swiper/css';
+import BrandSlider from '@layouts/components/BrandSlider';
+const {brands}=Astro.props
+---
+<section class="pb-8 mt-14">
+  <div class="overflow-hidden">
+    <div class="container">
+      <div class="row ">
+        <div class="col-md-12 animate from-right " data-aos="fade-right">
+            <div class="border-y border-border py-5">
+              <BrandSlider brands={brands} client:load />
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+

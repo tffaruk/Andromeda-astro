@@ -1,0 +1,143 @@
+---
+import Logo from "@components/Logo.astro";
+import menu from "@config/menu.json";
+export interface ChildNavigationLink {
+  name: string;
+  url: string;
+}
+export interface NavigationLink {
+  name: string;
+  url: string;
+  hasChildren?: boolean;
+  children?: ChildNavigationLink[];
+}
+const {pathname}=Astro.url
+
+
+const { main }: { main: NavigationLink[] } = menu;
+---
+
+<header class={`header`} id="header">
+  <nav class="navbar container">
+    <!-- logo -->
+    <div class="order-0">
+      <Logo  />
+    </div>
+    <!-- navbar toggler -->
+    <input id="nav-toggle" type="checkbox" class="hidden" />
+    <label
+      id="show-button"
+      for="nav-toggle"
+      class="order-2 flex cursor-pointer items-center lg:order-1 lg:hidden"
+    >
+      <svg class="h-6 fill-current" viewBox="0 0 20 20">
+        <title>Menu Open</title>
+        <path d="M0 3h20v2H0V3z m0 6h20v2H0V9z m0 6h20v2H0V0z"></path>
+      </svg>
+    </label>
+    <label
+      id="hide-button"
+      for="nav-toggle"
+      class="order-2 hidden cursor-pointer items-center lg:order-1"
+    >
+      <svg class="h-6 fill-current" viewBox="0 0 20 20">
+        <title>Menu Close</title>
+        <polygon
+          points="11 9 22 9 22 11 11 11 11 22 9 22 9 11 -2 11 -2 9 9 9 9 -2 11 -2"
+          transform="rotate(45 10 10)"></polygon>
+      </svg>
+    </label>
+    <!-- /navbar toggler -->
+
+    <ul
+      id="nav-menu"
+      class="navbar-nav pt-10 lg:pt-0 lg:text-left text-center order-3 hidden w-full lg:order-1
+      lg:flex-row flex-col lg:flex lg:w-auto lg:space-x-2"
+    >
+      {
+        main.map((menu) => (
+          <fragment>
+            {menu.hasChildren ? (
+              <li class="nav-item nav-dropdown group cursor-pointer lg:cursor-default relative" id="dropdown-button">
+                <span class={`nav-link  xl:px-[1.06rem] lg:px-[0.625rem] lg:py-[0.9rem] inline-flex items-center ${menu.children?.map(({url})=>url).includes(pathname)?"text-primary":undefined}`}>
+                  {menu.name}
+                  <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                  </svg>
+                </span>
+                <ul id="dropdown" class="nav-dropdown-list hidden lg:invisible lg:absolute lg:block lg:opacity-0 lg:group-hover:visible lg:group-hover:opacity-100">
+                  {menu.children?.map((child) => (
+                    <li class="nav-dropdown-item hover:bg-primary/10 rounded-md ">
+                      <a href={child.url}  class={`nav-dropdown-link py-2 px-[0.9rem] block ${pathname===child.url?"text-primary":undefined}`}>
+                        {child.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ) : (
+              <li class={`nav-item `}>
+                <a href={menu.url} class={`nav-link py-2  block xl:px-[1.06rem] lg:px-[0.625rem] lg:py-[0.9rem] ${pathname===menu.url?"text-primary":null}`}>
+                  {menu.name}
+                </a>
+              </li>
+            )}
+          </fragment>
+        ))
+      }
+        <li class="order-1  text-center lg:hidden ml-autoflex  lg:order-2 md:ml-0 ">
+
+          <a
+            class="btn btn-primary"
+            href="search"
+          >
+       Sign Up Now
+          </a>
+        </li>
+    </ul>
+    <div class="order-1 hidden lg:flex ml-autoflex items-center lg:order-2 md:ml-0 ">
+      <a
+        class="btn btn-primary"
+        href="search"
+      >
+   Sign Up Now
+      </a>
+    </div>
+  </nav>
+</header>
+
+<script is:inline>
+  const button=document.getElementById("dropdown-button")
+  button.addEventListener("click",()=>{
+    const dropdown=document.getElementById("dropdown")
+    dropdown.classList.toggle(dropdown.style==="hidden"?"block":"hidden")
+
+  })
+
+  var lastScroll = 0;
+   const changeNavbarBackground = () => {
+   const header=document.getElementById("header")
+const headerHight=header.clientHeight+200
+const scrollY=window.scrollY
+
+window.onscroll = () => {
+  // header-sticky-top
+  if (scrollY > 0) {
+    header.classList.add("header-sticky-top");
+  } else {
+    header.classList.remove("header-sticky-top");
+  }
+if (scrollY>headerHight) {
+  console.log(lastScroll,scrollY)
+  if (lastScroll>scrollY) {
+    header.classList.remove("-translate-y-full");
+  }
+  else{
+    header.classList.add("-translate-y-full");
+  }
+  lastScroll = scrollY;
+}
+};
+    }
+    window.addEventListener("scroll", changeNavbarBackground);
+ </script>
